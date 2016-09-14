@@ -1,5 +1,6 @@
 package com.georgecorser.myapplication;
 
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,11 +11,17 @@ public class StopwatchActivity extends AppCompatActivity {
 
     private boolean running;
     private int seconds = 0;
+    private boolean wasRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
+        if(savedInstanceState != null) {
+            seconds = savedInstanceState.getInt("seconds");
+            running = savedInstanceState.getBoolean("running");
+            wasRunning = savedInstanceState.getBoolean("wasRunning");
+        }
         runTimer();
     }
 
@@ -51,8 +58,31 @@ public class StopwatchActivity extends AppCompatActivity {
 
     }
 
+    /*
+    public void onConfigurationChanged(Configuration config) {
 
+    }
+    */
 
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("seconds", seconds);
+        savedInstanceState.putBoolean("running", running);
+        savedInstanceState.putBoolean("wasRunning", wasRunning);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        wasRunning = running;
+        running = false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(wasRunning) {
+            running = true;
+        }
+    }
 
 }
